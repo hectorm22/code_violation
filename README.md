@@ -1,6 +1,6 @@
-# Phaser Webpack Template
+# Phaser Webpack Framewrok
 
-This is a Phaser 3 project framework that uses webpack for bundling. 
+This is a Phaser 3 project framework that uses webpack for bundling. Including a main menu, it can move cursor to choose button and enter next page. 
 
 ## Requirements
 
