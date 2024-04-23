@@ -9,13 +9,31 @@ export class Credits extends Scene
 
     create ()
     {
-        this.cameras.main.setBackgroundColor(0x00ff00);
+        // this.cameras.main.setBackgroundColor(0x00ff00);
 
-        this.add.image(512, 384, 'background').setAlpha(0.5);
+        this.add.image(512, 384, 'credits_background')
 
-        this.add.text(512, 384, 'Introduction!\n', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+        this.add.text(512, 250, 'Sprite Animations: Cade Andersen\n', {
+            fontFamily: 'Sans', fontSize: 30, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.add.text(512, 350, 'Input Control: Fang Lin\n', {
+            fontFamily: 'Sans', fontSize: 30, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.add.text(512, 450, 'User Interface: Everardo Robles\n', {
+            fontFamily: 'Sans', fontSize: 30, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.add.text(512, 550, 'Database: Hector Martinez\n', {
+            fontFamily: 'Sans', fontSize: 30, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
             align: 'center'
         }).setOrigin(0.5);
 
