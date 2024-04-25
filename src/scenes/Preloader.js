@@ -31,10 +31,12 @@ export class Preloader extends Scene
     {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
-        this.load.image('logo', 'logo.png');
+        this.load.image('background', 'menu_background.jpg');
+        this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'entrance.png');
         this.load.image('gameover_background', 'game_over.png');
+        this.load.image('cloud', 'cloud.png');
     }
 
     create ()
