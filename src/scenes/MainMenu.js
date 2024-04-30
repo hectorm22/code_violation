@@ -19,19 +19,6 @@ export class MainMenu extends Scene {
         this.menuButtons.forEach((button, index) => {
             this.animateButton(button, index * 200); // Adjust delay as needed
         });
-        
-        this.cloud = this.add.image(150, 150, 'cloud');
-
-        // Add a jitter effect to the cloud's position
-        this.tweens.add({
-            targets: this.cloud,
-            x: '+=1',
-            y: '+=0.5',
-            duration: 1000,
-            ease: 'Sine.easeInOut',
-            yoyo: true,
-            repeat: -1
-        });
     }
 
     createMenuButtons() {

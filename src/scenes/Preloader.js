@@ -35,8 +35,7 @@ export class Preloader extends Scene
         this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'entrance.png');
-        this.load.image('gameover_background', 'game_over.png');
-        this.load.image('cloud', 'cloud.png');
+        this.load.image('gameover_background', 'game_over.jpg');
     }
 
     create ()
