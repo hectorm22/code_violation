@@ -25,16 +25,30 @@ export class Preloader extends Scene
             bar.width = 4 + (460 * progress);
 
         });
+
     }
 
+    
+    
+    
     preload ()
     {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image('logo', 'logo.png');
         this.load.image('heart', 'heart.png');
-        this.load.image('game_background', 'entrance.png');
+        this.load.image('game_background', 'animations/game_background_new.png');
         this.load.image('gameover_background', 'game_over.png');
+        this.load.image('platform', 'animations/platform.png');
+        this.load.tilemapTiledJSON('map', 'animations/SuperMariotilemap.json');
+        this.load.image('SuperMarioBros-World1-1', 'animations/SuperMario.png');
+        this.load.atlas('maincharacter', 'animations/maincharacter.png', 'animations/maincharacter.json');
+        //this.load.tilemapTiledJSON('map1', 'animations/map.json');
+        //this.load.spritesheet('tiles', 'animations/tiles.png', {frameWidth: 70, frameHeight: 70});
+        this.load.atlas('enemydrone', 'animations/enemy.png', 'animations/enemy.json');
+        this.load.image('tiles', 'animations/texture.png');
+        this.load.atlas('laser', 'animations/laser.png', 'animations/laser.json');
+
     }
 
     create ()
