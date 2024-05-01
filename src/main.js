@@ -15,6 +15,13 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: {y: 500},
+            debug: false
+        }
+    },
     scene: [
         Boot,
         Preloader,
@@ -24,5 +31,7 @@ const config = {
         GameOver
     ]
 };
+
+
 
 export default new Phaser.Game(config);
