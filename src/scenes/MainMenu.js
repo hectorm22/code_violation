@@ -14,18 +14,11 @@ export class MainMenu extends Scene {
 
     create() {
         this.add.image(512, 384, 'background');
-        this.add.image(512, 100, 'logo');
-        /*this.add.text(512, 260, 'Main Menu', {
-            fontFamily: 'Arial Black',
-            fontSize: 38,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);*/
-
         this.createMenuButtons();
         this.selectButton(this.selectedButtonIndex);
+        this.menuButtons.forEach((button, index) => {
+            this.animateButton(button, index * 200); // Adjust delay as needed
+        });
     }
 
     createMenuButtons() {
@@ -35,14 +28,14 @@ export class MainMenu extends Scene {
         for (let i = 0; i < levels.length; i++) {
             const menuButton = this.add.text(
                 460,
-                360 + i * 100,
+                400 + i * 75,
                 levels[i].name,
                 {
                     fontFamily: 'Arial Black',
                     fontSize: 26,
                     color: '#ffffff',
                     stroke: '#000000',
-                    strokeThickness: 8,
+                    strokeThickness: 6,
                     align: 'center'
                 }
             );
@@ -96,5 +89,18 @@ export class MainMenu extends Scene {
         } else {
             console.error('Selected button is undefined.');
         }
+    }
+
+    animateButton(button, delay) {
+        this.tweens.add({
+            targets: button,
+            scaleX: 1.05, // Scale up by 10%
+            scaleY: 1.05,
+            duration: 750, // Animation duration in milliseconds
+            ease: 'Sine.easeInOut',
+            yoyo: true, // Play animation in reverse
+            repeat: -1, // Repeat indefinitely
+            delay: delay, // Delay before starting the animation
+        });
     }
 }
