@@ -2,9 +2,9 @@
 
 This is a Phaser 3 project framework that uses webpack for bundling. Including a main menu, it can move cursor to choose button and enter next page. 
 
-## Basic Gameplayer
+## Basic Gameplay
 
-The enemy will trace the player. When the enemy approches the player, it will drop bomb. If a bomb touched the player, the health of the player will decrease. But the player can collect the star to increase the health. The player can use the laser to shoot the enemy. If the laser touches the enemy, the shield of the enemy will decrease. However, the enemy will increase its shield over time. I plan to win the game when the enemy lose all shield and lost when the player is out of the health or falls out of the bound.
+The enemy will trace the player. When the enemy approches the player, it will drop bombs. If a bomb touched the player, the health of the player will decrease. But the player can collect the star to increase the health. The player can use the laser to shoot the enemy. If the laser touches the enemy, the shield of the enemy will decrease. However, the enemy will increase its shield over time. I plan to win the game when the enemy lost all shields and lose the game when the player is out of the health or falls out of the bound.
 
 ## Requirements
 
