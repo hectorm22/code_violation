@@ -39,7 +39,6 @@ export class Preloader extends Scene
         this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'animations/game_background_new.png');
-        this.load.image('gameover_background', 'game_over.png');
         this.load.image('platform', 'animations/platform.png');
         this.load.tilemapTiledJSON('map', 'animations/SuperMariotilemap.json');
         this.load.image('SuperMarioBros-World1-1', 'animations/SuperMario.png');
@@ -48,17 +47,60 @@ export class Preloader extends Scene
         //this.load.spritesheet('tiles', 'animations/tiles.png', {frameWidth: 70, frameHeight: 70});
         this.load.atlas('enemydrone', 'animations/enemy.png', 'animations/enemy.json');
         this.load.image('tiles', 'animations/texture.png');
-        this.load.atlas('laser', 'animations/laser.png', 'animations/laser.json');
+        this.load.image('laser', 'laserBlue.png');
         this.load.image('game_background', 'entrance.png');
         this.load.image('gameover_background', 'game_over.jpg');
+
+        this.load.audio('buttonAudio', './audio/buttonPressSound.wav');
+        this.load.audio('laserAudio', './audio/laser.m4a')
+        this.load.audio('exploseAudio', './audio/explosion.wav')
+        this.load.image('bomb', 'bomb.png');
+        this.load.image('star', 'star.png');
     }
 
     create ()
     {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
-
+        if (!this.usernameCookie){
+            this.setUsername();
+        }
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
     }
+
+    getUsername ()
+    {
+        this.load.json('http://localhost:3000/getUsername', (response) => {
+            const username = response.username || 'No session found';
+            console.log('Username from session:', username);
+        });
+        return username;
+    }
+
+    setUsername ()
+    {
+        const usernameCookie = document.cookie.split('; ').find(row => row.startsWith('connect.sid='));
+        if (!usernameCookie) {
+            const username = prompt('Set an username:');
+            if (username) {
+                // Send a POST request to set the username in the server's session
+                fetch('http://localhost:3000/setUsername', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Username set successfully:', username);
+                        // Set username in a cookie
+                        document.cookie = `username=${username}; max-age=${30 * 24 * 60 * 60}; path=/`; // Set cookie path as needed
+                    } else {
+                        console.error('Failed to set username');
+                    }
+                })
+                .catch(error => console.error('Error setting username:', error));
+            }
+        }
+
+    }
+
 }
