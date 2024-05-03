@@ -17,30 +17,30 @@
         <script>
             const serverURL = "http://localhost:3000";
 
-            async function dataTestGET() {
-                const serverResp = await fetch(`${serverURL}/getdata?hello=world`, 
+            async function leaderboardTest() {
+                const serverResp = await fetch(`${serverURL}/leaderboard`,
                 {
                     method: "GET",
                     mode: "cors",
                     headers: {"Accept": "application/json"}
                 });
                 
-                const data = await serverResp.json();
-                console.log("got data from server:");
-                console.log(data);
+                const leaderboard = await serverResp.json(); // [ {username: string, bestScore: int, bestTime: float}, ...]
+                console.log(leaderboard);
             }
 
-            async function dataTestPOST() {
-                fetch(`${serverURL}/postdata?username=hectorm&bestScore=13&bestTime=8.36&lives=2&kills=28&deaths=4`, 
+            async function postTest() {
+                fetch(`${serverURL}/post_data`, 
                 {
                     method: "POST",
                     mode: "cors",
-                    headers: {"Accept": "application/json"}
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({username: "shooty_mcshootface", score: 18, time: 12.47}) // {username: string, bestScore: int, bestTime: float}
                 });
             }
 
-            // dataTestGET();
-            // dataTestPOST();
+            //leaderboardTest();
+            //postTest();
         </script>
     </body>
 </html>
