@@ -39,7 +39,7 @@ export class Preloader extends Scene
         this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'animations/game_background_new.png');
-        this.load.image('gameover_background', 'game_over.png');
+        this.load.image('gameover_background', 'game_over.jpg');
         this.load.image('platform', 'animations/platform.png');
         this.load.tilemapTiledJSON('map', 'animations/SuperMariotilemap.json');
         this.load.image('SuperMarioBros-World1-1', 'animations/SuperMario.png');
@@ -50,7 +50,6 @@ export class Preloader extends Scene
         this.load.image('tiles', 'animations/texture.png');
         this.load.atlas('laser', 'animations/laser.png', 'animations/laser.json');
         this.load.image('game_background', 'entrance.png');
-        this.load.image('gameover_background', 'game_over.jpg');
     }
 
     create ()
