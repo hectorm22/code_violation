@@ -87,15 +87,20 @@ export class Game extends Scene {
 
         this.map3 = this.make.tilemap({ data:array2, tileWidth: 100, tileHeight: 100});
         this.map3.addTilesetImage("tiles");
+        
+        this.map4 = this.make.tilemap({ data:array3, tileWidth: 100, tileHeight: 100});
+        this.map4.addTilesetImage("tiles");
 
         this.layer = this.map2.createLayer(0, "tiles", 0, 600);
         this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);
+        this.layer3 = this.map4.createLayer(0, "tiles", 3600, 400);
 
         
 
         // Or, you can set collision on all indexes within an array
         this.map2.setCollision([0]);
         this.map3.setCollision([0]);
+        this.map4.setCollision([0]);
 
         // Visualize the colliding tiles
         const debugGraphics = this.add.graphics();
@@ -124,7 +129,7 @@ export class Game extends Scene {
 
         //settings for the camera and bounds for camera
         this.controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
-        this.cameras.main.setBounds(0, 0, this.map2.widthInPixels + this.map3.widthInPixels, this.map2.heightInPixels + this.map3.heightInPixels);
+        this.cameras.main.setBounds(0, 0, this.map2.widthInPixels + this.map3.widthInPixels + this.map4.widthInPixels, this.map3.heightInPixels + this.map4.heightInPixels);
         
         //addition of enemy spritye and maincharacter
         this.enemy = this.physics.add.sprite(1000, 100, 'enemydrone');
@@ -242,12 +247,13 @@ export class Game extends Scene {
         }, this);
 
         //setting world bounds 
-        this.physics.world.bounds.width = this.map2.widthInPixels + this.map3.widthInPixels;
+        this.physics.world.bounds.width = this.map2.widthInPixels + this.map3.widthInPixels + this.map4.widthInPixels + 100000;
         this.physics.world.bounds.height = this.map2.heightInPixels + 1000;
 
         //collision detetction for browser
         this.physics.add.collider(this.player, this.layer, this.handleCollision, null, this);
         this.physics.add.collider(this.player, this.layer2, this.handleCollision, null, this);
+        this.physics.add.collider(this.player, this.layer3, this.handleCollision, null, this);
     }
 
     update(time, delta) {
@@ -255,6 +261,7 @@ export class Game extends Scene {
         //setting collision for players
         this.physics.collide(this.player, this.layer);
         this.physics.collide(this.player, this.layer2);
+        this.physics.collide(this.player, this.layer3);
         //this.physics.collide(this.enemy, this.layer1);
         
         //character orientation
