@@ -71,7 +71,8 @@ module.exports = {
                 { from: 'public/favicon.png', to: 'favicon.png' },
                 { from: 'public/style.css', to: 'style.css' },
                 { from: 'code_viol.db', to: 'code_viol.db' },
-                { from: 'server.js', to: 'server.js' }
+                { from: 'server.js', to: 'server.js' },
+                { from: 'package-prod.json', to: 'package.json' },
             ],
         }),
     ]
