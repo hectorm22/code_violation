@@ -11,6 +11,7 @@ const cors = require("cors");
 const express = require('express');
 
 const app = express();
+const port = 3000;
 
 app.use(cors());
 app.set('/', path.join(__dirname, './index.html'));
@@ -26,7 +27,8 @@ function printError(err) {
 app.get('/leaderboard', (req, res) => {
     const db = new sqlite3.Database('code_viol.db', (err) => {
         if (err) {
-            console.error('Error opening database: ' + err);
+            console.error('Error getting high scores:', err);
+            res.status(500).send('Internal Server Error');
             return;
         }
     });
@@ -37,7 +39,7 @@ app.get('/leaderboard', (req, res) => {
             db.close();
             return;
         }
-
+        
         res.json(rows);
     });
 
