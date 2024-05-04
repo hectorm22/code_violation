@@ -35,4 +35,4 @@ The enemy will trace the player. When the enemy approches the player, it will dr
 **A: Yes, any web server can run Code Violation, other than using NodeJS + ExpressJS, such as PHP or your own custom-made web server. The web server must handle requests from the root directory.**
 
 ### Q: How can I read the database file?
-**A: You can use a software like [DB Browser for SQLite](https://sqlitebrowser.org/) that runs in most popular operating systems to view, change, import and export its data.**
+**A: You can use a software like [DB Browser for SQLite](https://sqlitebrowser.org/) that runs in most popular operating systems to view, change, import and export data.**
