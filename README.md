@@ -32,7 +32,7 @@ The enemy will trace the player. When the enemy approches the player, it will dr
 
 ## Frequently Asked Questions (FAQ)
 ### Q: Is it possible to run the game other than using Node?
-**A: Yes, any web server can run Code Violation, other than using NodeJS + ExpressJS, such as PHP or your own custom-made web server. The web server must handle requests from the root directory.**
+**A: No, you must use NodeJS + ExpressJS as its web server, since the client and server side emit specific fetch calls to each other.**
 
 ### Q: How can I read the database file?
 **A: You can use a software like [DB Browser for SQLite](https://sqlitebrowser.org/) that runs in most popular operating systems to view, change, import and export data.**
