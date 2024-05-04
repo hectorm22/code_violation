@@ -57,12 +57,16 @@ export class Game extends Scene {
         this.map2.addTilesetImage("tiles");
         this.map3 = this.make.tilemap({ data:array2, tileWidth: 100, tileHeight: 100});
         this.map3.addTilesetImage("tiles");
+        this.map4 = this.make.tilemap({ data:array3, tileWidth: 100, tileHeight: 100});
+        this.map4.addTilesetImage("tiles");
         this.layer = this.map2.createLayer(0, "tiles", 0, 600);
-        this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);        
+        this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);    
+        this.layer3 = this.map4.createLayer(0, "tiles", 3600, 400);    
 
         // Or, you can set collision on all indexes within an array
         this.map2.setCollision([0]);
         this.map3.setCollision([0]);
+        this.map4.setCollision([0]);
         // Visualize the colliding tiles
         const debugGraphics = this.add.graphics();
         debugGraphics.setScale(2);
@@ -136,22 +140,21 @@ export class Game extends Scene {
                 // Perform an action every 50 seconds
                 console.log('10 seconds have passed');
 
-        this.map3 = this.make.tilemap({ data:array2, tileWidth: 100, tileHeight: 100});
-        this.map3.addTilesetImage("tiles");
+        //this.map3 = this.make.tilemap({ data:array2, tileWidth: 100, tileHeight: 100});
+        //this.map3.addTilesetImage("tiles");
         
-        this.map4 = this.make.tilemap({ data:array3, tileWidth: 100, tileHeight: 100});
-        this.map4.addTilesetImage("tiles");
-
-        this.layer = this.map2.createLayer(0, "tiles", 0, 600);
-        this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);
-        this.layer3 = this.map4.createLayer(0, "tiles", 3600, 400);
+  
+        
+        //this.layer = this.map2.createLayer(0, "tiles", 0, 600);
+        //this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);
+        
 
         
 
         // Or, you can set collision on all indexes within an array
-        this.map2.setCollision([0]);
-        this.map3.setCollision([0]);
-        this.map4.setCollision([0]);
+        //this.map2.setCollision([0]);
+        //this.map3.setCollision([0]);
+        
 
         // Visualize the colliding tiles
         const debugGraphics = this.add.graphics();
