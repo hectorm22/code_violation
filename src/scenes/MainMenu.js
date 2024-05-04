@@ -6,6 +6,7 @@ export class MainMenu extends Scene {
         super('MainMenu');
         this.menuButtons = [];
         this.selectedButtonIndex = 0;
+        this.buttonSound;
     }
 
     init() {
@@ -19,6 +20,8 @@ export class MainMenu extends Scene {
         this.menuButtons.forEach((button, index) => {
             this.animateButton(button, index * 200); // Adjust delay as needed
         });
+
+        this.buttonSound = this.sound.add('buttonAudio');
     }
 
     createMenuButtons() {
@@ -59,11 +62,14 @@ export class MainMenu extends Scene {
         if (upJustPressed) {
             this.selectedButtonIndex = Math.max(this.selectedButtonIndex - 1, 0);
             this.selectButton(this.selectedButtonIndex);
+            this.buttonSound.play();
         } else if (downJustPressed) {
             this.selectedButtonIndex = Math.min(this.selectedButtonIndex + 1, levels.length - 1);
             this.selectButton(this.selectedButtonIndex);
+            this.buttonSound.play();
         } else if (spaceJustPressed) {
             this.confirmSelection();
+            this.buttonSound.play();
         }
     }
 
@@ -81,6 +87,8 @@ export class MainMenu extends Scene {
                 this.scene.start('Game', { levelIndex: this.selectedButtonIndex });
             } else if (this.selectedButtonIndex === 1) {
                 this.scene.start('Credits');
+            } else if (this.selectedButtonIndex === 2) {
+                this.scene.start('LeaderBoard');
             } else {
                 if (confirm('Are you sure you want to exit?')) {
                     this.scene.stop('MainMenu'); // stop the main menu

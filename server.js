@@ -11,6 +11,7 @@ const cors = require("cors");
 const express = require('express');
 
 const app = express();
+const port = 3000;
 
 app.use(cors());
 app.set('/', path.join(__dirname, './index.html'));
@@ -18,77 +19,92 @@ app.use(express.static(__dirname));
 
 //-----------------------------------------------------------------------------------------
 
-// database querying handler
-app.get('/getdata', (req, res) => {
+function printError(err) {
+    console.error("Server-side error: " + err);
+}
+
+// leaderboard data handler
+app.get('/leaderboard', (req, res) => {
     const db = new sqlite3.Database('code_viol.db', (err) => {
         if (err) {
-            console.error('Error opening database: ' + err);
+            console.error('Error getting high scores:', err);
+            res.status(500).send('Internal Server Error');
             return;
         }
     });
 
-    db.all('SELECT * FROM Records', (err, rows) => {
+    db.all('SELECT username, bestScore, bestTime FROM Records', (err, rows) => {
+        if (err) {
+            printError(err);
+            db.close();
+            return;
+        }
+        
         res.json(rows);
     });
 
     db.close();
 });
 
-app.post('/postdata', (req) => {
-    var userAlreadyExists = false;
+app.post('/post_data', express.json(), (req, res) => {
+    const postData = req.body; // {username: string, score: int, time: float}
+    const db = new sqlite3.Database('code_viol.db', function(err) { if (err) printError(err) });
 
-    // if there are any errors, print it. otherwise don't.
-    let printError = function(err) {
-        if (err)
-            console.error("Error: " + err);
-    }
-
-    let postDatabase = function(anyErr) {
-        printError(anyErr);
-
-        // make a prepared statement to prevent SQL injection tomfoolery.
-        const postPrepStmt = (userAlreadyExists) ?
-            db.prepare("UPDATE Records SET bestScore = ?, bestTime = ?, lives = ?, kills = ?, deaths = ? WHERE username = ?") :
-            db.prepare("INSERT INTO Records (bestScore, bestTime, lives, kills, deaths, username) VALUES(?,?,?,?,?,?)");
-
-        // bind each param from the url to each question mark in this order:
-        try {
-            postPrepStmt.run(
-                req.query.bestScore,
-                req.query.bestTime,
-                req.query.lives,
-                req.query.kills,
-                req.query.deaths,
-                req.query.username
-            );
-        }
-        catch (err) {
-            printError("Error posting data to database. Do the URL params of the postdata API have the correct names?");
-            printError("\t" + err);
-        }
-
-        postPrepStmt.finalize(printError);
-        db.close();
-    }
-
-    const db = new sqlite3.Database('code_viol.db', printError);
-    const checkPrepStmt = db.prepare("SELECT COUNT(id) as cnt FROM Records WHERE username = ?");
-    const usernameCount = checkPrepStmt.get(req.query.username);
-
-    // check if user already exists so that we can update their data instead of making a new user entry each time.
-
-    usernameCount.each(
-        function(anyErr, rows) {
-            if (rows.cnt > 0)
-                userAlreadyExists = true;
-
-            printError(anyErr);
+    db.get("SELECT id FROM Records WHERE username = ?", [postData.username], function(err, row){
+        if (err) {
+            printError("data post - " + err);
+            db.close();
             return;
-        },
-        postDatabase // call this function after all rows are fetched.
-    );
+        }
 
-    checkPrepStmt.finalize(printError);
+        if (row) {
+            // user already exists in db.
+            
+            db.each("SELECT * FROM Records WHERE username = ?", [postData.username], function(err, row) {
+                if (err) {
+                    printError("data post - " + err);
+                    db.close();
+                    return;
+                }
+
+                // only update if the new score is higher than the old score.
+                if (postData.score > row.bestScore)
+                {
+                    db.run("UPDATE Records SET bestScore = ? WHERE username = ?", [postData.score, postData.username], function(err) {
+                        if (err)
+                            printError(err);
+                    });
+
+                    console.log(`updated new score for ${postData.username} (${row.bestScore} -> ${postData.score})`);
+                }
+
+                // only update if the new time is less than the old time.
+                if (postData.time < row.bestTime)
+                {
+                    db.run("UPDATE Records SET bestTime = ? WHERE username = ?", [postData.time, postData.username], function(err) {
+                        if (err)
+                            printError(err);
+                    });
+
+                    console.log(`updated new time for ${postData.username} (${row.bestTime} -> ${postData.time})`);
+                }
+            });
+        }
+        else {
+            // user doesn't exist in db. create user and update fields.
+            console.log(`creating user ${postData.username} and setting its data.`);
+
+            db.run("INSERT INTO Records (username, bestScore, bestTime) VALUES(?,?,?)", [postData.username, postData.score, postData.time], function(err) {
+                if (err) {
+                    printError("data post - " + err);
+                    db.close();
+                    return;
+                }
+            });
+        }
+    });
+
+    db.close();
 });
 
 // get anything other than the root file
