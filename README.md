@@ -5,6 +5,9 @@
 # Code Violation
 Code Violation is a web-based 2-D platformer game using the Phaser 3 framework.
 
+## Basic Gameplay
+The enemy will trace the player. When the enemy approches the player, it will drop bombs. If a bomb touched the player, the health of the player will decrease. But the player can collect the star to increase the health. The player can use the laser to shoot the enemy. If the laser touches the enemy, the shield of the enemy will decrease. However, the enemy will increase its shield over time. I plan to win the game when the enemy lost all shields and lose the game when the player is out of the health or falls out of the bound.
+
 ## Requirements
 [NodeJS](https://nodejs.org) is required to properly install Code Violation and all of its dependencies. Preferably, `npm` should have  latest update.
 
@@ -19,10 +22,17 @@ by Code Violation to function.
 Code Violation can be run by executing `npm run start` in a terminal. A message will appear
 informing you that the server has been activated and now running.
 
-Using any browser, navigate to `http://localhost:3000`, where upon visiting the game will initialize and display. On each visit or refresh, the game will ask you for a username. Enter any username to proceed.
+Using any browser, navigate to `http://localhost:3000`, where upon visiting the game will initialize and display. On each visit or refresh, the game will ask you for a username. Enter any username to proceed. If you receive an error about a port already being in use, navigate to the [troubleshooting](#troubleshooting) section
 
-## Basic Gameplay
-The enemy will trace the player. When the enemy approches the player, it will drop bombs. If a bomb touched the player, the health of the player will decrease. But the player can collect the star to increase the health. The player can use the laser to shoot the enemy. If the laser touches the enemy, the shield of the enemy will decrease. However, the enemy will increase its shield over time. I plan to win the game when the enemy lost all shields and lose the game when the player is out of the health or falls out of the bound.
+## Troubleshooting
+### Port in use
+This is usually because another program on your machine is listening on port 3000, the same port Code Violation uses. In this case do these steps below:
+1. Open the `server.js` file located at the root directory.
+2. Navigate to the end of the file, there should be a line that reads: 
+```js 
+app.listen(3000, () => {
+```
+3. Change `3000` to something like `3030`, or any other port number you think is not in use. Save and close the file and start the server again. The server should now start up normally.
 
 ## Contributors and Maintainers
 - Cade Andersen
