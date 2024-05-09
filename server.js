@@ -50,61 +50,67 @@ app.post('/post_data', express.json(), (req, res) => {
     const postData = req.body; // {username: string, score: int, time: float}
     const db = new sqlite3.Database('code_viol.db', function(err) { if (err) printError(err) });
 
-    db.get("SELECT id FROM Records WHERE username = ?", [postData.username], function(err, row){
-        if (err) {
-            printError("data post - " + err);
-            db.close();
-            return;
-        }
+    db.serialize(() => {
+        db.get("SELECT id FROM Records WHERE username = ?", [postData.username], function(err, row){
+            if (err) {
+                printError("data post - " + err);
+                db.close();
+                return;
+            }
 
-        if (row) {
-            // user already exists in db.
-            
-            db.each("SELECT * FROM Records WHERE username = ?", [postData.username], function(err, row) {
-                if (err) {
-                    printError("data post - " + err);
+            if (row) {
+                // user already exists in db.
+                
+                db.each("SELECT * FROM Records WHERE username = ?", [postData.username], function(err, row) {
+                    if (err) {
+                        printError("data post - " + err);
+                        db.close();
+                        return;
+                    }
+
+                    // only update if the new score is higher than the old score.
+                    if (postData.score > row.bestScore)
+                    {
+                        db.run("UPDATE Records SET bestScore = ? WHERE username = ?", [postData.score, postData.username], function(err) {
+                            if (err)
+                                printError(err);
+
+                            db.close();
+                        });
+
+                        console.log(`updated new score for ${postData.username} (${row.bestScore} -> ${postData.score})`);
+                    }
+
+                    // only update if the new time is less than the old time.
+                    if (postData.time < row.bestTime)
+                    {
+                        db.run("UPDATE Records SET bestTime = ? WHERE username = ?", [postData.time, postData.username], function(err) {
+                            if (err)
+                                printError(err);
+                            
+                            db.close();
+                        });
+
+                        console.log(`updated new time for ${postData.username} (${row.bestTime} -> ${postData.time})`);
+                    }
+                });
+            }
+            else {
+                // user doesn't exist in db. create user and update fields.
+                console.log(`creating user ${postData.username} and setting its data.`);
+
+                db.run("INSERT INTO Records (username, bestScore, bestTime) VALUES(?,?,?)", [postData.username, postData.score, postData.time], function(err) {
+                    if (err) {
+                        printError("data post - " + err);
+                        db.close();
+                        return;
+                    }
+
                     db.close();
-                    return;
-                }
-
-                // only update if the new score is higher than the old score.
-                if (postData.score > row.bestScore)
-                {
-                    db.run("UPDATE Records SET bestScore = ? WHERE username = ?", [postData.score, postData.username], function(err) {
-                        if (err)
-                            printError(err);
-                    });
-
-                    console.log(`updated new score for ${postData.username} (${row.bestScore} -> ${postData.score})`);
-                }
-
-                // only update if the new time is less than the old time.
-                if (postData.time < row.bestTime)
-                {
-                    db.run("UPDATE Records SET bestTime = ? WHERE username = ?", [postData.time, postData.username], function(err) {
-                        if (err)
-                            printError(err);
-                    });
-
-                    console.log(`updated new time for ${postData.username} (${row.bestTime} -> ${postData.time})`);
-                }
-            });
-        }
-        else {
-            // user doesn't exist in db. create user and update fields.
-            console.log(`creating user ${postData.username} and setting its data.`);
-
-            db.run("INSERT INTO Records (username, bestScore, bestTime) VALUES(?,?,?)", [postData.username, postData.score, postData.time], function(err) {
-                if (err) {
-                    printError("data post - " + err);
-                    db.close();
-                    return;
-                }
-            });
-        }
+                });
+            }
+        });
     });
-
-    db.close();
 });
 
 // get anything other than the root file
