@@ -38,6 +38,7 @@ export class Game extends Scene {
         this.explosionSound;
 
         this.stars;
+        this.fighters;
     }
 
     
@@ -106,6 +107,15 @@ export class Game extends Scene {
             strokeThickness: 4
         }).setOrigin(1, 0).setScrollFactor(0);
 
+        
+        const help = this.add.text(16, 16, 'Click to toggle rendering collision information.', {
+            fontSize: '18px',
+            padding: { x: 10, y: 5 },
+            backgroundColor: '#000000',
+            fill: '#ffffff'
+            });
+        help.setScrollFactor(0);
+
         /****************************
          *  Build the timer
          ****************************/
@@ -138,41 +148,8 @@ export class Game extends Scene {
             this.timerText.setText('Timer: '+this.timer.toString());
             if (this.timer % 10 === 0) {
                 // Perform an action every 50 seconds
-                console.log('10 seconds have passed');
-
-        //this.map3 = this.make.tilemap({ data:array2, tileWidth: 100, tileHeight: 100});
-        //this.map3.addTilesetImage("tiles");
+                console.log('10 seconds have passed')
         
-  
-        
-        //this.layer = this.map2.createLayer(0, "tiles", 0, 600);
-        //this.layer2 = this.map3.createLayer(0, "tiles", 1800, 500);
-        
-
-        
-
-        // Or, you can set collision on all indexes within an array
-        //this.map2.setCollision([0]);
-        //this.map3.setCollision([0]);
-        
-
-        // Visualize the colliding tiles
-        const debugGraphics = this.add.graphics();
-        debugGraphics.setScale(2);
-        this.map2.renderDebug(debugGraphics);
-
-        this.input.on('pointerdown', () =>
-        {
-            debugGraphics.visible = !debugGraphics.visible;
-        });
-
-        const help = this.add.text(16, 16, 'Click to toggle rendering collision information.', {
-            fontSize: '18px',
-            padding: { x: 10, y: 5 },
-            backgroundColor: '#000000',
-            fill: '#ffffff'
-        });
-        help.setScrollFactor(0);
                 // update player data
                 let minutePart = Math.floor(this.timer / 60);
                 let secondsPart = (this.timer % 60) / 100;
@@ -198,7 +175,7 @@ export class Game extends Scene {
         this.controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
         this.cameras.main.setBounds(0, 0, this.map2.widthInPixels + this.map3.widthInPixels + this.map4.widthInPixels, this.map3.heightInPixels + this.map4.heightInPixels);
         
-        //addition of enemy sprit and maincharacter
+        //addition of enemy sprite and maincharacter
         this.enemy = this.physics.add.sprite(1000, 100, 'enemydrone');
         this.enemy.setScale(.2)
         this.enemy.setGravity(-10);
@@ -319,6 +296,12 @@ export class Game extends Scene {
 
         // Set laserGroup
         this.lasers = new LaserGroup(this);
+        // Check if the laser is out of bounds and destroy it
+        this.physics.world.on('worldbounds', (body) => {
+            if (body.gameObject && body.gameObject.name === 'laser') {
+                body.gameObject.destroy(); // Destroy the laser
+            }
+        });
         this.laserSound = this.sound.add('laserAudio');
         
         //collision detetction for browser
@@ -327,15 +310,22 @@ export class Game extends Scene {
         this.physics.add.collider(this.player, this.layer3, this.handleCollision, null, this);
         this.physics.add.collider(this.player, this.layer);
         this.physics.add.collider(this.player, this.layer2);
+        this.physics.add.collider(this.player, this.layer3);
         
         // Set Bombs
         this.bombs = this.physics.add.group();
         this.physics.add.collider(this.bombs, this.layer);
         this.physics.add.collider(this.bombs, this.layer2);
+        this.physics.add.collider(this.bombs, this.layer3);
         this.physics.add.collider(this.player, this.bombs, this.touchBomb, null, this);
-        this.physics.add.overlap(this.lasers, this.enemy, this.touchEnemies, null, this);
+
+        this.physics.add.collider(this.lasers, this.layer);
+        this.physics.add.collider(this.lasers, this.layer2);
+        this.physics.add.collider(this.lasers, this.layer3);        
+        this.physics.add.collider(this.lasers, this.enemy, this.touchEnemies, null, this);
         this.explosionSound = this.sound.add('exploseAudio');
 
+        // Set Stars
         this.stars = this.physics.add.group({
             key: 'star',
             repeat: 2,
@@ -349,6 +339,36 @@ export class Game extends Scene {
         this.physics.add.collider(this.stars, this.layer);
         this.physics.add.collider(this.stars, this.layer2);
         this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+
+        // Fighters group
+        this.fighters = this.physics.add.group({
+            key: 'enemyfighter',
+            repeat: 2,
+            setXY: { x:this.player.x, y: 50, stepX: 150 },
+        });
+
+        // Move fighters towards player and generate new fighters
+        this.time.addEvent({
+            delay: 5000, // Delay for generating new fighters 
+            callback: () => {
+                this.fighters.children.iterate((fighter) => {
+                    //fighter.y -= 1; // Adjust speed here (e.g., 1 units per update)
+                
+                });
+
+            // Generate new fighter if needed
+            const lastFighter = this.fighters.getLast(true); // Get the last fighter in the group
+            if (lastFighter && lastFighter.y > 100) {
+                const newFighter = this.fighters.create(this.player.x, 50, 'enemyfighter'); // Create new fighter
+                newFighter.setVelocityY(150); // Set initial velocity if needed
+            }
+            this.dropBomb(lastFighter);
+            },
+            callbackScope: this,
+            loop: true,
+        });
+
+        this.physics.add.collider(this.lasers, this.fighters, this.touchFighters, null, this);
     }
 
     update() {
@@ -359,6 +379,8 @@ export class Game extends Scene {
             this.timer = 0;
             this.physics.pause();
             this.gameOver = false;
+            this.playerHealth = 5;
+            this.shield = 10000; 
             this.scene.start('GameOver');
         }
 
@@ -405,6 +427,9 @@ export class Game extends Scene {
             if (laser) {
                 this.fireBullet();
                 this.laserSound.play();
+            }
+            if (laser.y > 700){
+                laser.destroy();
             }
         }
     
@@ -493,6 +518,7 @@ export class Game extends Scene {
 
     fireBullet() {
 		this.lasers.fireBullet(this.player.x, this.player.y + 20);
+
 	}
 
     enemyAttach ()
@@ -500,10 +526,10 @@ export class Game extends Scene {
         var numOfBomb = 3;
         for (var i = 0; i < numOfBomb; i++) {
             // var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            var bomb = this.bombs.create(this.enemy.x, this.enemy.y+20, 'bomb');
+            var bomb = this.bombs.create(this.enemy.x, this.enemy.y+10, 'bomb');
             bomb.setBounce(0.5);
             bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(350);
+            bomb.setVelocity(300);
         }
     }
     touchBomb (player, bomb)
@@ -524,7 +550,7 @@ export class Game extends Scene {
 
     touchEnemies (laser, enemy)
     {
-        //laser.disableBody(true, true);
+        //laser.setVisible(false);
         //enemy.disableBody(true, true);
         this.shield -= 10;
         this.shieldText.setText('--- Shield:' + this.shield);
@@ -532,7 +558,7 @@ export class Game extends Scene {
         this.scoreText.setText('Score: ' + this.score);
         if (this.shield <=0){
             this.explosionSound.play();
-            laser.disableBody(true,true);
+            enemy.disableBody(true,true);
         }
     }
 
@@ -546,5 +572,26 @@ export class Game extends Scene {
                 child.enableBody(true, child.x, 0, true, true);
             });
         }
+    }
+
+    dropBomb (fighter)
+    {
+        var numOfBomb = 1;
+        for (var i = 0; i < numOfBomb; i++) {
+            // var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            var bomb = this.bombs.create(fighter.x-200, 300, 'bomb');
+            bomb.setBounce(0.5);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(250);
+        }
+    }
+
+    touchFighters(laser, fighter)
+    {
+        laser.disableBody(true, true);
+        laser.setVisible(false);
+        fighter.disableBody(true, true);
+        this.score += 10;
+        this.scoreText.setText('Score: ' + this.score);
     }
 }

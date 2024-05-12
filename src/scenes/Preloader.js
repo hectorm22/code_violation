@@ -38,7 +38,7 @@ export class Preloader extends Scene
         this.load.image('background', 'menu_background.jpg');
         this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
-        this.load.image('game_background', 'game_background.png');
+        this.load.image('game_background', 'animations/game_background_new.png');
         this.load.image('gameover_background', 'game_over.jpg');
         this.load.image('platform', 'animations/platform.png');
         this.load.tilemapTiledJSON('map', 'animations/SuperMariotilemap.json');
@@ -54,6 +54,7 @@ export class Preloader extends Scene
         this.load.audio('exploseAudio', './audio/explosion.wav')
         this.load.image('bomb', 'bomb.png');
         this.load.image('star', 'star.png');
+        this.load.image('enemyfighter', 'enemyFighter.png')
     }
 
     create ()
