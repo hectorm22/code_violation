@@ -18,6 +18,12 @@ export class Game extends Scene {
         this.layer = null;
         this.enemy = null;
         this.enemy_alive = true;
+        this.enemy2 = null;
+        this.enemy2_alive = true;
+        this.enemy3 = null;
+        this.enemy3_alive = true;
+        
+        
         this.map2 = null;
         this.map3 = null;
         this.laser = null;
@@ -35,8 +41,12 @@ export class Game extends Scene {
         this.laserSound;
         this.gameOver = false;
         this.attachPlayer = false;
-        this.shield = 10000;
+        this.shield = 100;
         this.shieldText;
+        this.shield2 = 100;
+        this.shieldText2;
+        this.shield3 = 100;
+        this.shieldText3;
         this.explosionSound;
         this.bangerSound;
         this.stars;
@@ -126,6 +136,22 @@ export class Game extends Scene {
             strokeThickness: 4
         }).setOrigin(1, 0).setScrollFactor(0);
 
+        this.shieldText2 = this.add.text(220, lifeTextY+40, `--- Shield: ${this.shield2}`, {
+            fontFamily: 'Sans',
+            fontSize: 18,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(1, 0).setScrollFactor(0);
+
+        this.shieldText3 = this.add.text(220, lifeTextY+60, `--- Shield: ${this.shield3}`, {
+            fontFamily: 'Sans',
+            fontSize: 18,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(1, 0).setScrollFactor(0);
+
         
         const help = this.add.text(16, 16, 'Click to toggle rendering collision information.', {
             fontSize: '18px',
@@ -178,7 +204,11 @@ export class Game extends Scene {
             }
             if (this.timer % 2 === 0 && this.attachPlayer === true && this.enemy_alive == true){
                 this.shield += 10;
+                this.shield2 += 10;
+                this.shield3 += 10;
                 this.enemyAttach();
+                this.enemyAttach2();
+                this.enemyAttach3();
             }
 
         }, 1000);
@@ -196,8 +226,18 @@ export class Game extends Scene {
         
         //addition of enemy sprite and maincharacter
         this.enemy = this.physics.add.sprite(1000, 100, 'enemydrone');
+        this.enemy2 = this.physics.add.sprite(2000, 100, 'enemydrone');
+        this.enemy3 = this.physics.add.sprite(3000, 100, 'enemydrone');
+
         this.enemy.setScale(.2)
         this.enemy.setGravity(-10);
+        this.enemy2.body.setSize(200, 200);
+        this.enemy2.setScale(.2)
+        this.enemy2.setGravity(-10);
+        this.enemy3.body.setSize(200, 200);
+        this.enemy3.setScale(.2)
+        this.enemy3.setGravity(-10);
+
         this.player = this.physics.add.sprite(100,550, 'maincharacter');
         this.player.setScale(.5);
         this.player.flipX = true;
@@ -300,7 +340,7 @@ export class Game extends Scene {
         }, this);
 
         //setting world bounds 
-        this.physics.world.bounds.width = this.map2.widthInPixels + this.map3.widthInPixels + this.map4.widthInPixels + 100000;
+        this.physics.world.bounds.width = this.map2.widthInPixels + this.map3.widthInPixels + this.map4.widthInPixels;
         this.physics.world.bounds.height = this.map2.heightInPixels + 1000;
         // Set up input cursors
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S); // 'S' key
@@ -312,6 +352,8 @@ export class Game extends Scene {
         this.player.play('walk');
         this.player.setBounce(0.2);       
         this.enemy.play('fly');
+        this.enemy2.play('fly');
+        this.enemy3.play('fly');
 
         // Set laserGroup
         this.lasers = new LaserGroup(this);
@@ -342,6 +384,8 @@ export class Game extends Scene {
         this.physics.add.collider(this.lasers, this.layer2);
         this.physics.add.collider(this.lasers, this.layer3);        
         this.physics.add.collider(this.lasers, this.enemy, this.touchEnemies, null, this);
+        this.physics.add.overlap(this.lasers, this.enemy2, this.touchEnemies2, null, this);
+        this.physics.add.overlap(this.lasers, this.enemy3, this.touchEnemies3, null, this);
         this.explosionSound = this.sound.add('exploseAudio');
 
         // Set Stars
@@ -399,7 +443,13 @@ export class Game extends Scene {
             this.physics.pause();
             this.gameOver = false;
             this.playerHealth = 5;
-            this.shield = 10000; 
+            this.shield = 100;
+            this.shield2 = 100;
+            this.shield3 = 100; 
+            this.gameOver = false;
+            this.enemy_alive = true;
+            this.enemy2_alive = true;
+            this.enemy3_alive = true;
             this.scene.start('GameOver');
         }
 
@@ -414,6 +464,18 @@ export class Game extends Scene {
             this.enemy.flipX = true;
         } else {
             this.enemy.flipX = false;
+        }
+
+        if (this.player.x > this.enemy2.x) {
+            this.enemy2.flipX = true;
+        } else {
+            this.enemy2.flipX = false;
+        }
+
+        if (this.player.x > this.enemy3.x) {
+            this.enemy3.flipX = true;
+        } else {
+            this.enemy3.flipX = false;
         }
         
         //character controls
@@ -454,6 +516,8 @@ export class Game extends Scene {
     
         // Distance between player and enemy
         const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enemy.x, this.enemy.y);
+        const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enemy2.x, this.enemy2.y);
+        const distance3 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enemy3.x, this.enemy3.y);
         const followDistance = 600; 
         const minDistance = 200;
 
@@ -463,6 +527,8 @@ export class Game extends Scene {
 
         // Calculate the angle from the enemy to the target position
         const angleToTarget = Phaser.Math.Angle.Between(this.enemy.x, this.enemy.y, targetX, targetY);
+        const angleToTarget2 = Phaser.Math.Angle.Between(this.enemy2.x, this.enemy2.y, targetX, targetY);
+        const angleToTarget3 = Phaser.Math.Angle.Between(this.enemy3.x, this.enemy3.y, targetX, targetY);
     
         //if enemy comes in distance  of main chracter he follows
         if (distance < followDistance) {
@@ -486,6 +552,52 @@ export class Game extends Scene {
             this.enemy.setVelocityX(0);
             this.enemy.setVelocityY(0);
         }         
+
+
+        if (distance2 < followDistance) {
+            // Calculate the angle from the enemy to the player
+            const angle = Phaser.Math.Angle.Between(this.enemy2.x, this.enemy2.y, this.player.x, this.player.y);
+            this.enemy2.play('irate');
+            // Set the velocity of the enemy to move towards the player
+            if (distance2 > minDistance) {
+                this.enemy2.setVelocityX(Math.cos(angleToTarget2) * 260); 
+                this.enemy2.setVelocityY(Math.sin(angleToTarget2) * 260); 
+                //this.attachPlayer = false;
+            } 
+            else {        
+                this.enemy2.setVelocityX(-Math.cos(angleToTarget2) * 100); 
+                this.enemy2.setVelocityY(-Math.sin(angleToTarget2) * 100);
+                this.attachPlayer = true;
+            }
+        }
+        else {
+            this.enemy2.play('fly');
+            this.enemy2.setVelocityX(0);
+            this.enemy2.setVelocityY(0);
+        }        
+
+        if (distance3 < followDistance) {
+            // Calculate the angle from the enemy to the player
+            const angle = Phaser.Math.Angle.Between(this.enemy3.x, this.enemy3.y, this.player.x, this.player.y);
+            this.enemy3.play('irate');
+            // Set the velocity of the enemy to move towards the player
+            if (distance3 > minDistance) {
+                this.enemy3.setVelocityX(Math.cos(angleToTarget3) * 260); 
+                this.enemy3.setVelocityY(Math.sin(angleToTarget3) * 260); 
+                //this.attachPlayer = false;
+            } 
+            else {        
+                this.enemy3.setVelocityX(-Math.cos(angleToTarget3) * 100); 
+                this.enemy3.setVelocityY(-Math.sin(angleToTarget3) * 100);
+                this.attachPlayer = true;
+            }
+        }
+        else {
+            this.enemy3.play('fly');
+            this.enemy3.setVelocityX(0);
+            this.enemy3.setVelocityY(0);
+        }   
+
         //ends game if player falls through floor
         if (this.player.y > 1000) {
             console.log('Player is out of bounds');
@@ -498,6 +610,7 @@ export class Game extends Scene {
         if (this.playerHealth <=0){
             this.attachPlayer = false;    
         }
+
     }
 
     updateHealthIndicator() {
@@ -562,6 +675,46 @@ export class Game extends Scene {
             }       
         }
     }
+
+    enemyAttach2 ()
+    {
+        var numOfBomb = 1;
+        for (var i = 0; i < numOfBomb; i++) {
+            // var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            var bomb = this.bombs.create(this.enemy2.x, this.enemy2.y+20, 'bomb');
+            bomb.setBounce(0.5);
+            bomb.setCollideWorldBounds(true);
+            if (this.player.x < this.enemy2.x) {
+                // Player is to the left, set velocity to negative
+                bomb.setVelocityX(-350);
+            }
+            else
+            {
+                // Player is to the right, set velocity to positive
+                bomb.setVelocityX(350);
+            }       
+        }
+    }
+
+    enemyAttach3 ()
+    {
+        var numOfBomb = 1;
+        for (var i = 0; i < numOfBomb; i++) {
+            // var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            var bomb = this.bombs.create(this.enemy3.x, this.enemy3.y+20, 'bomb');
+            bomb.setBounce(0.5);
+            bomb.setCollideWorldBounds(true);
+            if (this.player.x < this.enemy3.x) {
+                // Player is to the left, set velocity to negative
+                bomb.setVelocityX(-350);
+            }
+            else
+            {
+                // Player is to the right, set velocity to positive
+                bomb.setVelocityX(350);
+            }       
+        }
+    }
     touchBomb (player, bomb)
     {
         //this.physics.pause();
@@ -596,11 +749,43 @@ export class Game extends Scene {
             }
         }
     }
+    touchEnemies2(laser, enemy)
+        {
+        this.shield2 -= 10;
+        this.shieldText2.setText('--- Shield:' + this.shield2);
+        this.score += 10;
+        this.scoreText.setText('Score: ' + this.score);
+        if (this.shield2 <=0){
+            //enemy.destroy()
+            this.explosionSound.play();
+            laser.disableBody(true,true);
+            this.enemy2_alive = false;
+        }
+    }   
+
+    touchEnemies3(laser, enemy)
+    {
+        this.shield3 -= 10;
+        this.shieldText3.setText('--- Shield:' + this.shield3);
+        this.score += 10;
+        this.scoreText.setText('Score: ' + this.score);
+        if (this.shield3 <=0){
+            //enemy.destroy()
+            this.explosionSound.play();
+            laser.disableBody(true,true);
+            this.enemy3_alive = false;
+        }
+    }
 
     collectStar (player, star)
     {
         star.disableBody(true, true);
-        this.playerHealth += 1;
+        // Check if player health is less than 5 before increasing it
+        if (this.playerHealth < 5) {
+            this.playerHealth += 1;
+          // Update health indicator
+            this.updateHealthIndicator();
+        }
         if (this.stars.countActive(true) === 0)
         {
             this.stars.children.iterate(function (child) {
@@ -629,4 +814,22 @@ export class Game extends Scene {
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
     }
+
+    startDeathAnimation()
+    {
+        if(this.animationIsPlaying === false)
+        {
+            this.animationIsPlaying = true;
+            this.player.anims.play('death', true);
+        }
+    }
+
+    checkEnemiesDefeated() {
+        if (!this.enemy_alive && !this.enemy2_alive && !this.enemy3_alive) {
+            this.allEnemiesDefeated = true;
+        } else {
+            this.allEnemiesDefeated = false;
+        }
+    }
+    
 }
