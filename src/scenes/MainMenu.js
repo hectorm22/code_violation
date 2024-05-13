@@ -31,7 +31,7 @@ export class MainMenu extends Scene {
         for (let i = 0; i < levels.length; i++) {
             const menuButton = this.add.text(
                 460,
-                400 + i * 75,
+                400 + i * 40,
                 levels[i].name,
                 {
                     fontFamily: 'Arial Black',
@@ -84,12 +84,14 @@ export class MainMenu extends Scene {
 
         if (selectedButton) {
             if (this.selectedButtonIndex === 0) {
-                this.scene.start('Level1', { levelIndex: this.selectedButtonIndex });
+                this.scene.start('Game', { levelIndex: this.selectedButtonIndex });
             } else if (this.selectedButtonIndex === 1) {
-                this.scene.start('Credits');
+                this.scene.start('Level1', {levelIndex: this.selectedButtonIndex });
             } else if (this.selectedButtonIndex === 2) {
-                this.scene.start('LeaderBoard');
+                this.scene.start('Credits');
             } else if (this.selectedButtonIndex === 3) {
+                this.scene.start('LeaderBoard');
+            } else if (this.selectedButtonIndex === 4) {
                 this.scene.start('Settings');
             } else {
                 if (confirm('Are you sure you want to exit?')) {

@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import BustlingOrson from '../objects/MainCharacter'; // import the player
 import LaserGroup from '../objects/LaserGroup';
+import eventsCenter from './EventsCenter';
 
 export class Level1 extends Scene {
     constructor() {
@@ -42,6 +43,21 @@ export class Level1 extends Scene {
 
     create() {
         // build the level
+        this.bangerSound = this.sound.add('banger');
+        eventsCenter.on('toggleMusic', (toggle) => {
+            if (toggle) {
+                this.bangerSound.play();
+            } else {
+                this.bangerSound.stop();
+            }
+        });
+
+        eventsCenter.on('toggleSounds', (toggle) => {
+            if (toggle) {
+                this.soundsEnabled = toggle;
+            }
+        });
+        
         this.add.image(3840 / 2, 1536 / 2, 'level1_bg');
 
         this.map = this.make.tilemap({ key: "level1map", tileWidth: 128, tileHeight: 128 });

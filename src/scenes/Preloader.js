@@ -49,9 +49,9 @@ export class Preloader extends Scene
         this.load.atlas('enemydrone', 'animations/enemy.png', 'animations/enemy.json');
         this.load.image('tiles', 'animations/texture.png');
         this.load.image('laser', 'laserBlue.png');
-        this.load.audio('buttonAudio', './audio/buttonPressSound.mp3');
-        this.load.audio('laserAudio', './audio/laser.m4a')
-        this.load.audio('exploseAudio', './audio/explosion.wav')
+        this.load.audio('buttonAudio', 'audio/buttonPressSound.mp3');
+        this.load.audio('laserAudio', 'audio/laser.m4a')
+        this.load.audio('exploseAudio', 'audio/explosion.wav')
         this.load.image('bomb', 'bomb.png');
         this.load.image('enemyfighter', 'enemyFighter.png')
         this.load.image('star', 'grub.png');
