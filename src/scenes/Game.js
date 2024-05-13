@@ -16,6 +16,7 @@ export class Game extends Scene {
         this.layer = null;
         this.layer = null;
         this.enemy = null;
+        this.enemy_alive = true;
         this.map2 = null;
         this.map3 = null;
         this.laser = null;
@@ -180,7 +181,7 @@ export class Game extends Scene {
 
                 this.saveData();
             }
-            if (this.timer % 2 === 0 && this.attachPlayer === true){
+            if (this.timer % 2 === 0 && this.attachPlayer === true && this.enemy_alive == true){
                 this.shield += 10;
                 this.enemyAttach();
             }
@@ -497,13 +498,21 @@ export class Game extends Scene {
 
     enemyAttach ()
     {
-        var numOfBomb = 3;
+        var numOfBomb = 1;
         for (var i = 0; i < numOfBomb; i++) {
             // var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
             var bomb = this.bombs.create(this.enemy.x, this.enemy.y+20, 'bomb');
             bomb.setBounce(0.5);
             bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(350);
+            if (this.player.x < this.enemy.x) {
+                // Player is to the left, set velocity to negative
+                bomb.setVelocityX(-350);
+            }
+            else
+            {
+                // Player is to the right, set velocity to positive
+                bomb.setVelocityX(350);
+            }       
         }
     }
     touchBomb (player, bomb)
@@ -533,6 +542,7 @@ export class Game extends Scene {
         if (this.shield <=0){
             this.explosionSound.play();
             laser.disableBody(true,true);
+            this.enemy_alive = false;
         }
     }
 
