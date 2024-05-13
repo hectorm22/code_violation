@@ -10,7 +10,7 @@ export class Preloader extends Scene
     init ()
     {
         //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+        // this.add.image(512, 384, 'preload-bg');
 
         //  A simple progress bar. This is the outline of the bar.
         this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
@@ -25,12 +25,8 @@ export class Preloader extends Scene
             bar.width = 4 + (460 * progress);
 
         });
-
     }
 
-    
-    
-    
     preload ()
     {
         //  Load the assets for the game - Replace with your own assets
@@ -39,9 +35,12 @@ export class Preloader extends Scene
         this.load.image('credits_background', 'c_background.png');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'game_background.png');
+        this.load.image('level1_bg', 'level1_bg.png');
         this.load.image('gameover_background', 'game_over.jpg');
         this.load.image('platform', 'animations/platform.png');
         this.load.tilemapTiledJSON('map', 'animations/SuperMariotilemap.json');
+        this.load.tilemapTiledJSON('level1map', 'level1.json'); // hector
+        this.load.image("level1tiles", "level1tiles.png");
         this.load.image('SuperMarioBros-World1-1', 'animations/SuperMario.png');
         this.load.atlas('maincharacter', 'animations/maincharacter.png', 'animations/maincharacter.json');
         //this.load.tilemapTiledJSON('map1', 'animations/map.json');
