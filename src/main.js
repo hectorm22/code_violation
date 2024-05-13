@@ -6,6 +6,7 @@ import { Preloader } from './scenes/Preloader';
 import { Credits } from './scenes/Credits';
 import { LeaderBoard } from './scenes/LeaderBoard';
 import { Level1 } from './scenes/Level1';
+import { Settings } from './scenes/Settings';
 
 const config = {
     type: Phaser.AUTO,
@@ -32,7 +33,8 @@ const config = {
         Credits,
         LeaderBoard,
         GameOver,
-        Level1
+        Level1,
+        Settings
     ]
 };
 

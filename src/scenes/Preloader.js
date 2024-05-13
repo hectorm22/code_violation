@@ -32,7 +32,8 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image('background', 'menu_background.jpg');
-        this.load.image('credits_background', 'c_background.png');
+        this.load.image('credits_background', 'game_over.jpg');
+        this.load.image('settings_background', 'game_over.jpg');
         this.load.image('heart', 'heart.png');
         this.load.image('game_background', 'animations/game_background_new.png');
         this.load.image('level1_bg', 'level1_bg.png');
@@ -48,12 +49,13 @@ export class Preloader extends Scene
         this.load.atlas('enemydrone', 'animations/enemy.png', 'animations/enemy.json');
         this.load.image('tiles', 'animations/texture.png');
         this.load.image('laser', 'laserBlue.png');
-        this.load.audio('buttonAudio', './audio/buttonPressSound.wav');
+        this.load.audio('buttonAudio', './audio/buttonPressSound.mp3');
         this.load.audio('laserAudio', './audio/laser.m4a')
         this.load.audio('exploseAudio', './audio/explosion.wav')
         this.load.image('bomb', 'bomb.png');
-        this.load.image('star', 'star.png');
         this.load.image('enemyfighter', 'enemyFighter.png')
+        this.load.image('star', 'grub.png');
+        this.load.audio('banger', 'audio/Nimbostratus.mp3')
     }
 
     create ()

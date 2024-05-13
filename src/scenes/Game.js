@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import LaserGroup from '../objects/LaserGroup';
+import eventsCenter from './EventsCenter';
 
 export class Game extends Scene {
     constructor() {
@@ -37,13 +38,30 @@ export class Game extends Scene {
         this.shield = 10000;
         this.shieldText;
         this.explosionSound;
-
+        this.bangerSound;
         this.stars;
         this.fighters;
+        this.musicEnabled = true;
+        this.soundsEnabled = true;
     }
 
     
     create() {
+        this.bangerSound = this.sound.add('banger');
+        eventsCenter.on('toggleMusic', (toggle) => {
+            if (toggle) {
+                this.bangerSound.play();
+            } else {
+                this.bangerSound.stop();
+            }
+        });
+
+        eventsCenter.on('toggleSounds', (toggle) => {
+            if (toggle) {
+                this.soundsEnabled = toggle;
+            }
+        });
+
         this.gameOver = false;
         /****************************
          *  Build the game world
@@ -518,6 +536,9 @@ export class Game extends Scene {
     }   
 
     fireBullet() {
+        if (this.soundsEnabled) {
+            this.laserSound.play();
+        }
 		this.lasers.fireBullet(this.player.x, this.player.y + 20);
 
 	}
@@ -546,7 +567,9 @@ export class Game extends Scene {
         //this.physics.pause();
         this.playerHealth -= 1;
         bomb.disableBody(true,true);
-        this.explosionSound.play();
+        if (this.soundsEnabled) {
+            this.explosionSound.play();
+        }
         if (this.playerHealth < 5){
             player.setTint(0xff0000);
         }else{
@@ -566,9 +589,11 @@ export class Game extends Scene {
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
         if (this.shield <=0){
+            if (this.soundsEnabled) {
             this.explosionSound.play();
             laser.disableBody(true,true);
             this.enemy_alive = false;
+            }
         }
     }
 

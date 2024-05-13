@@ -89,6 +89,8 @@ export class MainMenu extends Scene {
                 this.scene.start('Credits');
             } else if (this.selectedButtonIndex === 2) {
                 this.scene.start('LeaderBoard');
+            } else if (this.selectedButtonIndex === 3) {
+                this.scene.start('Settings');
             } else {
                 if (confirm('Are you sure you want to exit?')) {
                     this.scene.stop('MainMenu'); // stop the main menu
