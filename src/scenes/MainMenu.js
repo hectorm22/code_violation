@@ -84,7 +84,7 @@ export class MainMenu extends Scene {
 
         if (selectedButton) {
             if (this.selectedButtonIndex === 0) {
-                this.scene.start('Game', { levelIndex: this.selectedButtonIndex });
+                this.scene.start('Level1', { levelIndex: this.selectedButtonIndex });
             } else if (this.selectedButtonIndex === 1) {
                 this.scene.start('Credits');
             } else if (this.selectedButtonIndex === 2) {
