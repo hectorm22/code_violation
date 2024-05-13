@@ -5,6 +5,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { Credits } from './scenes/Credits';
 import { LeaderBoard } from './scenes/LeaderBoard';
+import { Level1 } from './scenes/Level1';
 
 const config = {
     type: Phaser.AUTO,
@@ -19,7 +20,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 300},
+            gravity: {y: 600},
             debug: false
         }
     },
@@ -30,7 +31,8 @@ const config = {
         Game,
         Credits,
         LeaderBoard,
-        GameOver
+        GameOver,
+        Level1
     ]
 };
 
